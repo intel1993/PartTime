@@ -48,6 +48,9 @@ class Client(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email',]
     objects = UserManager()
 
+    def __unicode__(self):
+            return "%s" % self.username
+
 
 class Record(models.Model):
     person_selling_name=models.CharField( max_length=200, null=False, blank=False)
@@ -59,6 +62,11 @@ class Record(models.Model):
     imei_no=models.CharField( max_length=200, null=False, blank=False)
     phone_sold_date=models.DateTimeField(default=timezone.now, blank=True,null=True)
     user_id=models.ForeignKey(Client, related_name='record')
-from django.db import models
+
+    def __unicode__(self):
+            return "%s" % self.user_id.username
+
+
+
 
 # Create your models here.
