@@ -14,4 +14,6 @@ urlpatterns = patterns('',
     url(r'^api/get/records', FetchUserRecords.as_view(), name='user-records'),
     url(r'^api/update/password', UserDetail.as_view(), name='change-password'),
     url(r'^api/search',SearchedRecordsList.as_view() , name='search'),
+    url(r'^api/change/password',PassChange.as_view() , name='pass-change'),
+
 )

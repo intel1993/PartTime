@@ -17,6 +17,7 @@ class RegistrationForm(forms.ModelForm):
             user.email='dummy@gmail.com'
             user.is_active=True
             user.save()
+
         except Exception as e:
             print e
 
@@ -33,6 +34,7 @@ class RecordForm(forms.ModelForm):
             record.user_id=user
             record.phone_sold_date=timezone.now()
             record.save()
+            return record.id
         except Exception as e:
             print e
 

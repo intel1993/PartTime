@@ -14,7 +14,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from serializers import UserRecordSerializer,UserSerializer,RecordSerializer
 from rest_framework import generics
-
+import hashlib
 
 class SignUp(APIView):
     permission_classes = (AllowAny,)
@@ -66,8 +66,8 @@ class CreateRecord(APIView):
     def post(self,request):
         form=RecordForm(request.DATA)
         if form.is_valid():
-            form.save(user=request.user)
-            return Response ({"success":True,"message":"Success"}, status.HTTP_200_OK)
+            record_id=form.save(user=request.user)
+            return Response ({"success":True,"message":"Success", "record-id":record_id}, status.HTTP_200_OK)
         else:
             return Response ({"success":False,"message":"Invalid Data"}, status.HTTP_406_NOT_ACCEPTABLE)
 
@@ -76,6 +76,33 @@ class FetchUserRecords(APIView):
     def get(self,request):
         serializer=UserRecordSerializer(request.user)
         return Response(serializer.data, status.HTTP_200_OK)
+
+
+class PassChange(APIView):
+    permission_classes = (AllowAny,)
+    @method_decorator( csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(PassChange,self).dispatch(request,*args,**kwargs)
+
+    @method_decorator( csrf_exempt)
+    def post(self,request):
+        username=request.DATA['username']
+        old_password=request.DATA['oldpassword']
+        new_password=request.DATA['newpassword']
+        try:
+            user=Client.objects.get(username=username)
+            if user is not None:
+                success=user.check_password(old_password)
+                if success==True:
+                    user.set_password(new_password)
+                    return Response ({"success":True,"message":"Password Changed Successfully"}, status.HTTP_200_OK)
+                else:
+                    return Response ({"success":False,"message":"Wrong Password"}, status.HTTP_406_NOT_ACCEPTABLE)
+            else:
+                return Response ({"success":False,"message":"No Such User Exits"}, status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            print e
+            return Response ({"success":False,"message":"Invalid Username"}, status.HTTP_406_NOT_ACCEPTABLE)
 
 
 class UserDetail(APIView):
