@@ -95,6 +95,7 @@ class PassChange(APIView):
                 success=user.check_password(old_password)
                 if success==True:
                     user.set_password(new_password)
+                    user.save()
                     return Response ({"success":True,"message":"Password Changed Successfully"}, status.HTTP_200_OK)
                 else:
                     return Response ({"success":False,"message":"Wrong Password"}, status.HTTP_406_NOT_ACCEPTABLE)
