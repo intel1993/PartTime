@@ -123,7 +123,7 @@ class UserDetail(APIView):
     def put(self, request):
         snippet = self.get_object(request.user.id)
         try:
-            snippet.set_password(request.DATA['password'])
+            snippet.set_password(request.DATA['newpassword'])
             snippet.save()
             return Response(status=status.HTTP_200_OK)
         # serializer = UserSerializer(snippet, data=request.DATA)
