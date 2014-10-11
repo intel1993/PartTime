@@ -12,4 +12,6 @@ urlpatterns = patterns('',
     url(r'^api/signup', SignUp.as_view(), name='signup'),
     url(r'^api/create/', CreateRecord.as_view(), name='create-record'),
     url(r'^api/get/records', FetchUserRecords.as_view(), name='user-records'),
+    url(r'^api/update/password', UserDetail.as_view(), name='change-password'),
+    url(r'^api/search',SearchedRecordsList.as_view() , name='search'),
 )

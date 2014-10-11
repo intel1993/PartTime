@@ -1,3 +1,4 @@
+import xadmin
 from django import forms
 from models import Client,Record
 from django.utils import timezone
@@ -7,12 +8,13 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = Client
-        fields=['name','address','ph_no','shop_name','username','password']
+        fields=['name','address','ph_no','shop_name','username','password','cnic_no','location']
 
     def save(self ,commit=True):
         try:
             user=super(RegistrationForm,self).save(commit=False)
             user.set_password(self.cleaned_data['password'])
+            user.email='dummy@gmail.com'
             user.is_active=True
             user.save()
         except Exception as e:
@@ -33,4 +35,5 @@ class RecordForm(forms.ModelForm):
             record.save()
         except Exception as e:
             print e
+
 

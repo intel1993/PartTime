@@ -4,8 +4,6 @@ from models import Record,Client
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields=('name','address','ph_no','shop_name','username')
-        exclude=('password')
 
 class RecordSerializer(serializers.ModelSerializer):
 

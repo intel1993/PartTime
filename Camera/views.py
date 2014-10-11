@@ -12,7 +12,8 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from serializers import UserRecordSerializer,UserSerializer
+from serializers import UserRecordSerializer,UserSerializer,RecordSerializer
+from rest_framework import generics
 
 
 class SignUp(APIView):
@@ -75,3 +76,58 @@ class FetchUserRecords(APIView):
     def get(self,request):
         serializer=UserRecordSerializer(request.user)
         return Response(serializer.data, status.HTTP_200_OK)
+
+
+class UserDetail(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get_object(self,pk):
+        try:
+            return Client.objects.get(pk=pk)
+        except Client.DoesNotExist as e:
+            print e
+            return Response({"success":False,"message":"Something Went Wrong"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get(self, request):
+        snippet = self.get_object(request.user.id)
+        serializer = UserSerializer(snippet)
+        return Response(serializer.data)
+
+    def put(self, request):
+        snippet = self.get_object(request.user.id)
+        try:
+            snippet.set_password(request.DATA['password'])
+            snippet.save()
+            return Response(status=status.HTTP_200_OK)
+        # serializer = UserSerializer(snippet, data=request.DATA)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        snippet = self.get_object(request.user.id)
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class SearchedRecordsList(generics.ListAPIView):
+    serializer_class = RecordSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset=Record.objects.filter(user_id=user)
+        # searched = self.request.QUERY_PARAMS.get('searched', None)
+        # type= self.request.QUERY_PARAMS.get('type', None)
+        # if searched is not None:
+        #     if type=='name':
+        #         queryset = queryset.filter(person_selling_name=searched)
+        #     elif type=='model':
+        #         queryset = queryset.filter(phone_model=searched)
+        #     elif type=='cnic':
+        #         queryset = queryset.filter(person_selling_cnic=searched)
+        #     elif type=='phone':
+        #         queryset = queryset.filter(person_selling_phone=searched)
+        #     elif type=='date':
+        #         queryset = queryset.filter(phone_sold_date__lte=searched)
+        return queryset
+
