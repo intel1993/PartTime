@@ -120,18 +120,18 @@ class UserDetail(APIView):
         serializer = UserSerializer(snippet)
         return Response(serializer.data)
 
-    def put(self, request):
+    def post(self, request):
         snippet = self.get_object(request.user.id)
         try:
             snippet.set_password(request.DATA['newpassword'])
             snippet.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response ({"success":True,"message":"Password Changed Successfully"}, status.HTTP_200_OK)
         # serializer = UserSerializer(snippet, data=request.DATA)
         # if serializer.is_valid():
         #     serializer.save()
         #     return Response(serializer.data)
         except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({"success":False,"message":"Something Went Wrong"},status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
         snippet = self.get_object(request.user.id)
