@@ -45,7 +45,8 @@ class Client(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
-    location =models.CharField(verbose_name=_("Location"),max_length=1000, null=True, blank=True)
+    latt_val=models.CharField(verbose_name=_("Lattitude"),max_length=1000, null=True, blank=True)
+    long_val=models.CharField(verbose_name=_("Longitude"),max_length=1000, null=True, blank=True)
     cnic_no = models.CharField(verbose_name=_("CNIC NO"),max_length=1000, null=True, blank=True)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email',]
