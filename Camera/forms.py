@@ -8,7 +8,7 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = Client
-        fields=['name','address','ph_no','shop_name','username','password','cnic_no','location']
+        fields=['name','address','ph_no','shop_name','username','password','cnic_no','latt_val', 'long_val']
 
     def save(self ,commit=True):
         try:
