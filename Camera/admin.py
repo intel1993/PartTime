@@ -1,5 +1,5 @@
 __author__ = 'Abdul Rehman'
-import xadmin
+from django.contrib import admin
 from models import Record,Client
 from xadmin.plugins.inline import Inline
 from django.contrib import admin
@@ -36,6 +36,8 @@ class MyUserAdmin(UserAdmin):
     ordering = ('email',)
     filter_horizontal = ()
 
-xadmin.site.unregister(Client)
-xadmin.site.register(Record)
-xadmin.site.register(Client)
+# Now register the new UserAdmin...
+admin.site.register(Client, MyUserAdmin)
+# ... and, since we're not using Django's built-in permissions,
+# unregister the Group model from admin.
+admin.site.register(Record)

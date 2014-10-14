@@ -126,10 +126,6 @@ class UserDetail(APIView):
             snippet.set_password(request.DATA['newpassword'])
             snippet.save()
             return Response ({"success":True,"message":"Password Changed Successfully"}, status.HTTP_200_OK)
-        # serializer = UserSerializer(snippet, data=request.DATA)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data)
         except Exception as e:
             return Response({"success":False,"message":"Something Went Wrong"},status=status.HTTP_400_BAD_REQUEST)
 
@@ -144,18 +140,49 @@ class SearchedRecordsList(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         queryset=Record.objects.filter(user_id=user)
-        # searched = self.request.QUERY_PARAMS.get('searched', None)
-        # type= self.request.QUERY_PARAMS.get('type', None)
-        # if searched is not None:
-        #     if type=='name':
-        #         queryset = queryset.filter(person_selling_name=searched)
-        #     elif type=='model':
-        #         queryset = queryset.filter(phone_model=searched)
-        #     elif type=='cnic':
-        #         queryset = queryset.filter(person_selling_cnic=searched)
-        #     elif type=='phone':
-        #         queryset = queryset.filter(person_selling_phone=searched)
-        #     elif type=='date':
-        #         queryset = queryset.filter(phone_sold_date__lte=searched)
         return queryset
+
+
+
+class RecordDetail1(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self,request):
+        return Response(status.HTTP_200_OK)
+    def post(self,request):
+        image = request.FILES['post']
+        try:
+            record= Record.objects.get(id=request.DATA['record-id'])
+            record.cnic_front=image
+            record.save()
+            return Response ({"success":True,"message":"CNIC front saved", "record-id":request.DATA['record-id']}, status.HTTP_200_OK)
+        except Exception as e:
+
+            return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
+
+class RecordDetail2(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self,request):
+        image = request.FILES['post']
+        try:
+            record= Record.objects.get(id=request.DATA['record-id'])
+            record.cnic_back=image
+            record.save()
+            return Response ({"success":True,"message":"CNIC Back saved", "record-id":request.DATA['record-id']}, status.HTTP_200_OK)
+        except Exception as e:
+            return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
+
+
+class RecordDetail3(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self,request):
+        image = request.FILES['post']
+        try:
+            record= Record.objects.get(id=request.DATA['record-id'])
+            record.signature=image
+            record.save()
+            return Response ({"success":True,"message":"Signature saved"}, status.HTTP_200_OK)
+        except Exception as e:
+            return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
+
+
 
