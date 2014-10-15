@@ -67,7 +67,8 @@ class CreateRecord(APIView):
         form=RecordForm(request.DATA)
         if form.is_valid():
             record_id=form.save(user=request.user)
-            return Response ({"success":True,"message":"Success", "record-id":record_id}, status.HTTP_200_OK)
+            print record_id
+            return Response ({"success":True,"message":"Success", "record":record_id}, status.HTTP_200_OK)
         else:
             return Response ({"success":False,"message":"Invalid Data"}, status.HTTP_406_NOT_ACCEPTABLE)
 
@@ -151,10 +152,10 @@ class RecordDetail1(APIView):
     def post(self,request):
         image = request.FILES['post']
         try:
-            record= Record.objects.get(id=request.DATA['record-id'])
+            record= Record.objects.get(id=request.DATA['record'])
             record.cnic_front=image
             record.save()
-            return Response ({"success":True,"message":"CNIC front saved", "record-id":request.DATA['record-id']}, status.HTTP_200_OK)
+            return Response ({"success":True,"message":"CNIC front saved"}, status.HTTP_200_OK)
         except Exception as e:
 
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
@@ -164,10 +165,10 @@ class RecordDetail2(APIView):
     def post(self,request):
         image = request.FILES['post']
         try:
-            record= Record.objects.get(id=request.DATA['record-id'])
+            record= Record.objects.get(id=request.DATA['record'])
             record.cnic_back=image
             record.save()
-            return Response ({"success":True,"message":"CNIC Back saved", "record-id":request.DATA['record-id']}, status.HTTP_200_OK)
+            return Response ({"success":True,"message":"CNIC Back saved"}, status.HTTP_200_OK)
         except Exception as e:
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
 
@@ -177,7 +178,7 @@ class RecordDetail3(APIView):
     def post(self,request):
         image = request.FILES['post']
         try:
-            record= Record.objects.get(id=request.DATA['record-id'])
+            record= Record.objects.get(id=request.DATA['record'])
             record.signature=image
             record.save()
             return Response ({"success":True,"message":"Signature saved"}, status.HTTP_200_OK)
