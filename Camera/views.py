@@ -163,19 +163,20 @@ class RecordDetail1(APIView):
         return Response(status.HTTP_200_OK)
     def post(self,request):
         try:
-            image = request.FILES['post']
-        except Exception as e:
-            log.error("Error=" +e)
-        try:
-            record= Record.objects.get(id=request.DATA['record'])
-            log.error("Record_no="+record)
-        except Exception as e:
-            log.error("Error=" +e)
-        try:
-            record.cnic_front=image
-            log.error("image equal to ")
-        except Exception as e:
-            log.error("Error=" +e)
+            try:
+                image = request.FILES['post']
+            except Exception as e:
+                log.error("Error=" +e)
+            try:
+                record= Record.objects.get(id=request.DATA['record'])
+                log.error("Record_no="+record)
+            except Exception as e:
+                log.error("Error=" +e)
+            try:
+                record.cnic_front=image
+                log.error("image equal to ")
+            except Exception as e:
+                log.error("Error=" +e)
 
             try:
                 record.save()
@@ -185,7 +186,7 @@ class RecordDetail1(APIView):
 
             return Response ({"success":True,"message":"CNIC front saved"}, status.HTTP_200_OK)
         except Exception as e:
-
+            log.error("Error=" +e)
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
 
 class RecordDetail2(APIView):

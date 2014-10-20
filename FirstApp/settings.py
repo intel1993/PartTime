@@ -162,7 +162,7 @@ LOGGING = {
         'logfile': {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': "logfile",
+            'filename': "logfile.log",
             'maxBytes': 50000,
             'backupCount': 2,
             'formatter': 'standard',
@@ -184,7 +184,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'MYAPP': {
+        'Camera': {
             'handlers': ['console', 'logfile'],
             'level': 'DEBUG',
         },
