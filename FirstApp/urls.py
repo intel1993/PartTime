@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     url(r'^api/search',SearchedRecordsList.as_view() , name='search'),
     url(r'^api/change/password',PassChange.as_view() , name='pass-change'),
     url(r'^api/submit/cnic1',RecordDetail1.as_view() , name='cnic1'),
-    url(r'^api/submit/cnic2',PassChange.as_view() , name='cnic2'),
+    url(r'^api/submit/cnic2',RecordDetail2.as_view() , name='cnic2'),
     url(r'^api/submit/signature',PassChange.as_view() , name='signature'),
+    url(r'^api/get/records/(?P<pk>\d+)/$', FetchUserRecordsDetail.as_view(), name="record-detail"),
+
 )

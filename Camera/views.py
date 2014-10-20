@@ -78,6 +78,16 @@ class FetchUserRecords(APIView):
         serializer=UserRecordSerializer(request.user)
         return Response(serializer.data, status.HTTP_200_OK)
 
+class FetchUserRecordsDetail(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request,pk):
+        snippet = Record.objects.get(id=pk)
+        serializer = RecordSerializer(snippet)
+        return Response(serializer.data)
+
+
+
 
 class PassChange(APIView):
     permission_classes = (AllowAny,)
@@ -184,6 +194,7 @@ class RecordDetail3(APIView):
             return Response ({"success":True,"message":"Signature saved"}, status.HTTP_200_OK)
         except Exception as e:
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
+
 
 
 
