@@ -6,6 +6,7 @@
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql:///camera</jdbc-url>
       <user-name>root</user-name>
+      <user-password>dfe1dfcbdfc7dfcfdfc2dfcbdfc7dfcfdfc2dfcbdf89dfeadf8b</user-password>
       <libraries />
     </data-source>
   </component>
