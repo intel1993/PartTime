@@ -15,6 +15,8 @@ from django.views.decorators.csrf import csrf_exempt
 from serializers import UserRecordSerializer,UserSerializer,RecordSerializer
 from rest_framework import generics
 import hashlib
+import logging
+log = logging.getLogger(__name__)
 
 class SignUp(APIView):
     permission_classes = (AllowAny,)
@@ -160,11 +162,27 @@ class RecordDetail1(APIView):
     def get(self,request):
         return Response(status.HTTP_200_OK)
     def post(self,request):
-        image = request.FILES['post']
+        try:
+            image = request.FILES['post']
+        except Exception as e:
+            log.error("Error=" +e)
         try:
             record= Record.objects.get(id=request.DATA['record'])
+            log.error("Record_no="+record)
+        except Exception as e:
+            log.error("Error=" +e)
+        try:
             record.cnic_front=image
-            record.save()
+            log.error("image equal to ")
+        except Exception as e:
+            log.error("Error=" +e)
+
+            try:
+                record.save()
+                log.error("record saved ")
+            except Exception as e:
+                log.error("Error=" +e)
+
             return Response ({"success":True,"message":"CNIC front saved"}, status.HTTP_200_OK)
         except Exception as e:
 
