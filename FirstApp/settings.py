@@ -145,35 +145,54 @@ try:
 except Exception as e:
     print e
 
+LOG_FILE_PATH = os.path.join(os.path.join(BASE_DIR, "logs"), 'new.log')
+LOG_FILE_SIZE = 5 * 1024 * 1024
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
+            'format': '[%(levelname)s : %(asctime)s] [%(name)s:%(lineno)s] %(process)d : %(message)s'
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
     },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
     'handlers': {
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'mysite.log'),
-            'formatter': 'verbose'
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_FILE_PATH,
+            'maxBytes': LOG_FILE_SIZE,
+            'backupCount': 50,
+            'formatter': 'verbose',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
         },
     },
     'loggers': {
-        'django': {
-            'handlers':['file'],
-            'propagate': True,
-            'level':'DEBUG',
-        },
-        'Camera': {
-            'handlers': ['file'],
+        'django.request': {
+            'handlers': ['file', 'mail_admins'],
             'level': 'DEBUG',
+            'propagate': True,
         },
-    }
+        'application': {
+            'handlers': ['file', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+    # 'root': {
+    #     'handlers': ['file', 'mail_admins'],
+    #     'level': 'DEBUG'
+    # },
 }
