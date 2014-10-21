@@ -171,44 +171,45 @@ class RecordDetail1(APIView):
                 ex=Exceptions()
                 ex.exception=e
                 ex.exception_time=datetime.datetime.now()
+                ex.status="image=request.files"
                 ex.save()
-                log.error("Error=" +e)
             try:
                 record= Record.objects.get(id=request.DATA['record'])
-                log.error("Record_no="+record)
             except Exception as e:
                 ex=Exceptions()
                 ex.exception=e
                 ex.exception_time=datetime.datetime.now()
+                ex.status="find record obj"
                 ex.save()
-                log.error("Error=" +e)
             try:
                 record.cnic_front=image
-                log.error("image equal to ")
             except Exception as e:
                 ex=Exceptions()
                 ex.exception=e
                 ex.exception_time=datetime.datetime.now()
+                ex.status="front = image"
                 ex.save()
-                log.error("Error=" +e)
+
 
             try:
                 record.save()
-                log.error("record saved ")
+                ex=Exceptions()
+                ex.status="saved ()"
+                ex.save()
             except Exception as e:
                 ex=Exceptions()
                 ex.exception=e
                 ex.exception_time=datetime.datetime.now()
+                ex.status="save error"
                 ex.save()
-                log.error("Error=" +e)
 
             return Response ({"success":True,"message":"CNIC front saved"}, status.HTTP_200_OK)
         except Exception as e:
             ex=Exceptions()
             ex.exception=e
             ex.exception_time=datetime.datetime.now()
+            ex.status="Overall exception"
             ex.save()
-            log.error("Error=" +e)
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
 
 class RecordDetail2(APIView):
