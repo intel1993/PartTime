@@ -1,6 +1,6 @@
 __author__ = 'Abdul Rehman'
 import xadmin
-from models import Record,Client
+from models import Record,Client,Exceptions
 from xadmin.plugins.inline import Inline
 from django.contrib import admin
 from django.contrib.auth.models import Group
@@ -39,3 +39,4 @@ class MyUserAdmin(UserAdmin):
 xadmin.site.unregister(Client)
 xadmin.site.register(Record)
 xadmin.site.register(Client)
+xadmin.site.register(Exceptions)

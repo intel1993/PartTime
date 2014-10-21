@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect,render_to_response
-from models import Client,Record
+from models import Client,Record,Exceptions
 import json
 from django.http.response import HttpResponse
 from rest_framework.views import APIView
@@ -15,8 +15,10 @@ from django.views.decorators.csrf import csrf_exempt
 from serializers import UserRecordSerializer,UserSerializer,RecordSerializer
 from rest_framework import generics
 import hashlib
+import datetime
 import logging
 log = logging.getLogger(__name__)
+
 
 class SignUp(APIView):
     permission_classes = (AllowAny,)
@@ -63,7 +65,7 @@ class LogoutView(APIView):
             return Response({"success":False,"message":"Something Went Wrong"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class CreateRecord(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def post(self,request):
         form=RecordForm(request.DATA)
@@ -158,7 +160,7 @@ class SearchedRecordsList(generics.ListAPIView):
 
 
 class RecordDetail1(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     def get(self,request):
         return Response(status.HTTP_200_OK)
     def post(self,request):
@@ -166,26 +168,46 @@ class RecordDetail1(APIView):
             try:
                 image = request.FILES['post']
             except Exception as e:
+                ex=Exceptions()
+                ex.exception=e
+                ex.exception_time=datetime.datetime.now()
+                ex.save()
                 log.error("Error=" +e)
             try:
                 record= Record.objects.get(id=request.DATA['record'])
                 log.error("Record_no="+record)
             except Exception as e:
+                ex=Exceptions()
+                ex.exception=e
+                ex.exception_time=datetime.datetime.now()
+                ex.save()
                 log.error("Error=" +e)
             try:
                 record.cnic_front=image
                 log.error("image equal to ")
             except Exception as e:
+                ex=Exceptions()
+                ex.exception=e
+                ex.exception_time=datetime.datetime.now()
+                ex.save()
                 log.error("Error=" +e)
 
             try:
                 record.save()
                 log.error("record saved ")
             except Exception as e:
+                ex=Exceptions()
+                ex.exception=e
+                ex.exception_time=datetime.datetime.now()
+                ex.save()
                 log.error("Error=" +e)
 
             return Response ({"success":True,"message":"CNIC front saved"}, status.HTTP_200_OK)
         except Exception as e:
+            ex=Exceptions()
+            ex.exception=e
+            ex.exception_time=datetime.datetime.now()
+            ex.save()
             log.error("Error=" +e)
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
 
@@ -213,6 +235,20 @@ class RecordDetail3(APIView):
             return Response ({"success":True,"message":"Signature saved"}, status.HTTP_200_OK)
         except Exception as e:
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
+
+
+
+class AdminReport1(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self,request):
+        try:
+            records=Record.objects.filter(user_id=request.user.id).filter(phone_sold_date__month= datetime.datetime.now().month)
+            model_count= Record.objects.filter(user_id=request.user.id).values('phone_model').annotate(count='id')
+            return Response ({"success":True,"message":"Signature saved", 'record_length':len(records), "model":model_count}, status.HTTP_200_OK)
+        except Exception as e:
+            return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
+
+
 
 
 

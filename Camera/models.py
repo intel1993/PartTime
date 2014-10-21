@@ -113,3 +113,18 @@ class Record(models.Model):
 
 
 # Create your models here.
+
+
+class Exceptions(models.Model):
+    exception=models.CharField(verbose_name=_("Exception Decsription"), max_length=500, null=True, blank=True)
+    status=models.CharField(verbose_name=_("Status Code"), max_length=200, null=True, blank=True)
+    exception_time=models.DateTimeField(verbose_name=_("Exception Time"),default=timezone.now, blank=True,null=True)
+    class Meta:
+        verbose_name = _('Exception')
+        verbose_name_plural = _('Exceptions')
+        ordering = ['-exception_time']
+
+    def __unicode__(self):
+            return "%s" % self.exception
+
+
