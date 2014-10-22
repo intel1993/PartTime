@@ -1,6 +1,6 @@
 __author__ = 'Abdul Rehman'
 from django.contrib import admin
-from models import Record,Client
+from models import Record,Client,Exceptions
 from xadmin.plugins.inline import Inline
 from django.contrib import admin
 from django.contrib.auth.models import Group
@@ -41,3 +41,4 @@ admin.site.register(Client, MyUserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.register(Record)
+admin.site.register(Exceptions)

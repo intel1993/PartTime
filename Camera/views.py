@@ -15,6 +15,8 @@ from django.views.decorators.csrf import csrf_exempt
 from serializers import UserRecordSerializer,UserSerializer,RecordSerializer
 from rest_framework import generics
 import hashlib
+from django.db.models import Count
+from django.core import serializers
 import datetime
 import logging
 log = logging.getLogger(__name__)
@@ -65,7 +67,7 @@ class LogoutView(APIView):
             return Response({"success":False,"message":"Something Went Wrong"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class CreateRecord(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self,request):
         form=RecordForm(request.DATA)
@@ -160,7 +162,7 @@ class SearchedRecordsList(generics.ListAPIView):
 
 
 class RecordDetail1(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     def get(self,request):
         return Response(status.HTTP_200_OK)
     def post(self,request):
@@ -238,19 +240,40 @@ class RecordDetail3(APIView):
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
 
 
-
-class AdminReport1(APIView):
+class AdminWorkMonths(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self,request):
         try:
-            records=Record.objects.filter(user_id=request.user.id).filter(phone_sold_date__month= datetime.datetime.now().month)
-            model_count= Record.objects.filter(user_id=request.user.id).values('phone_model').annotate(count='id')
-            return Response ({"success":True,"message":"Signature saved", 'record_length':len(records), "model":model_count}, status.HTTP_200_OK)
+            # total items sold this month
+            data=list(Record.objects.filter(user_id=request.user.id).\
+            extra(select={'month': "EXTRACT(month FROM phone_sold_date)"}).\
+            values('month'))
+            new=[]
+            for x in data:
+                new.append(x['month'])
+            obj=json.dumps(new)
+            return Response ({"success":True,"message":"Months List Generated","months":obj}, status.HTTP_200_OK)
         except Exception as e:
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
 
 
 
-
-
+class AdminReport1(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self,request,month):
+        try:
+            # total items sold this month
+            data=list(Record.objects.filter(user_id=request.user.id).\
+            extra(select={'month': "EXTRACT(month FROM phone_sold_date)"}).\
+            values('month').\
+            annotate(count=Count('phone_sold_date')))
+            for x in data:
+                if x['month'] == long(month):
+                    items=x['count']
+                    break
+            # model wise count
+            model_count= list(Record.objects.filter(user_id=request.user.id).values('phone_model').annotate(count=Count('id')))
+            return Response ({"success":True,"message":"Values Returned Successfully", 'soldItems':items, "models":json.dumps(model_count)}, status.HTTP_200_OK)
+        except Exception as e:
+            return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
 

@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     url(r'^api/submit/cnic2',RecordDetail2.as_view() , name='cnic2'),
     url(r'^api/submit/signature',PassChange.as_view() , name='signature'),
     url(r'^api/get/records/(?P<pk>\d+)/$', FetchUserRecordsDetail.as_view(), name="record-detail"),
-    url(r'^api/report1',AdminReport1.as_view() , name='admin_report1'),
+    url(r'^api/report1/(?P<month>\d+)/$',AdminReport1.as_view() , name='admin_month_report1'),
+    url(r'^api/months',AdminWorkMonths.as_view() , name='admin_months'),
 )
