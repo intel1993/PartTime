@@ -250,9 +250,10 @@ class AdminWorkMonths(APIView):
             values('month'))
             new=[]
             for x in data:
-                new.append(x['month'])
+                if x['month'] not in new:
+                    new.append(x['month'])
             obj=json.dumps(new)
-            return Response ({"success":True,"message":"Months List Generated","months":obj}, status.HTTP_200_OK)
+            return Response ({"success":True,"message":"Months List Generated","months":new}, status.HTTP_200_OK)
         except Exception as e:
             return Response ({"success":False,"message":"Something Went Wrong"}, status.HTTP_400_BAD_REQUEST)
 
